@@ -60,6 +60,24 @@ void setup() {
 			Serial.println("GET Laser status");
 			request->send(200, "text/plain", "tbd Laserstatus");
 	});
+  server.on("/laser", HTTP_POST, [](AsyncWebServerRequest *request) {
+			Serial.println("POST Laser status");
+			request->send(200, "text/plain", "tbd ToggleLaserStatus");
+	});
+  server.on("/scale/tara", HTTP_POST, [](AsyncWebServerRequest *request) {
+			Serial.println("POST tara");
+      //tbd
+      //all Scales will be taraed
+			request->send(200, "text/plain", "tbd tara Scale");
+	});
+  server.on("/scale/calibrate", HTTP_POST, [](AsyncWebServerRequest *request) {
+			Serial.println("POST calibrate Scale");
+      //tbd
+      //JsonPayload with number of Scale to be calibrated and Calibration weight in g
+      //Answer contains JSON with ScaleMultiplier
+			request->send(200, "text/plain", "tbd Calibrate Scale");
+	});
+  
 	ws.onEvent(onWsEvent);
 	server.addHandler(&ws);
 	server.begin();
