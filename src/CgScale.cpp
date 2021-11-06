@@ -5,12 +5,18 @@
 #include "ESPAsyncWebServer.h"
 #include "ArduinoJson.h"
 
+#include "scale.h"
+
 const char *ssid = "MyESP32AP";
 const char *password = "testpassword";
+
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
+scaleInterface *frontScale = new scaleDummy();
+scaleInterface *mainScaleLeft = new scaleDummy();
+scaleInterface *mainScaleRight = new scaleDummy();
 AsyncWebSocketClient * globalClient = NULL;
 
 DynamicJsonDocument jsonMessage(1024);
@@ -85,9 +91,12 @@ void setup() {
 
 void loop() {
 	if (globalClient != NULL && globalClient->status() == WS_CONNECTED) {
-		root["Scale1"] = String(random(0, 20));
-		root["Scale2"] = String(random(0, 20));
-		root["Scale3"] = String(random(0, 20));
+		//root["Scale1"] = String(random(0, 20));
+		//root["Scale2"] = String(random(0, 20));
+		//root["Scale3"] = String(random(0, 20));
+		root["Scale1"] = frontScale->getWeight();
+		root["Scale2"] = mainScaleLeft->getWeight();
+		root["Scale3"] = mainScaleRight->getWeight();
 		//ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
 		String jsonString;
 		serializeJson(root,jsonString);
