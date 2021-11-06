@@ -10,17 +10,20 @@ class scaleInterface
         virtual ~scaleInterface(){}
         virtual int getWeight() = 0;
         virtual void calibrate() = 0;
+        virtual void tare() = 0;
 };
 
 class scaleDummy : public scaleInterface
 {
-    //private:
+    private:
+        char *scaleElementName;
 
     public:
-        scaleDummy();
+        scaleDummy(char *elementName);
         ~scaleDummy();
         int getWeight();
         void calibrate();
+        void tare();
 };
 
 

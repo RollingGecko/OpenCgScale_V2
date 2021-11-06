@@ -2,14 +2,14 @@
 #include "scale.h"
 
 
-scaleDummy::scaleDummy()
+scaleDummy::scaleDummy(char *elementName)
 {
-
+    scaleElementName = elementName;
 }
 
 scaleDummy::~scaleDummy()
 {
-    
+
 }
 
 int scaleDummy::getWeight()
@@ -21,4 +21,9 @@ int scaleDummy::getWeight()
 void scaleDummy::calibrate()
 {
     Serial.println("calibrate call");
+}
+
+void scaleDummy::tare(){
+    Serial.print ("Tare scale Elenment ");
+    Serial.println(scaleElementName);
 }

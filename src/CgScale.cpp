@@ -14,9 +14,9 @@ const char *password = "testpassword";
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-scaleInterface *frontScale = new scaleDummy();
-scaleInterface *mainScaleLeft = new scaleDummy();
-scaleInterface *mainScaleRight = new scaleDummy();
+scaleInterface *frontScale = new scaleDummy("front Scale");
+scaleInterface *mainScaleLeft = new scaleDummy("main left Scale");
+scaleInterface *mainScaleRight = new scaleDummy("main right Scale");
 AsyncWebSocketClient * globalClient = NULL;
 
 DynamicJsonDocument jsonMessage(1024);
@@ -72,8 +72,12 @@ void setup() {
 	});
   server.on("/scale/tara", HTTP_POST, [](AsyncWebServerRequest *request) {
 			Serial.println("POST tara");
-      //tbd
+ 
       //all Scales will be taraed
+	  		mainScaleLeft->tare();
+			mainScaleRight->tare();
+			frontScale->tare();
+			
 			request->send(200, "text/plain", "tbd tara Scale");
 	});
   server.on("/scale/calibrate", HTTP_POST, [](AsyncWebServerRequest *request) {
