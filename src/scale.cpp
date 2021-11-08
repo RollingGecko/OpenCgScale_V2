@@ -18,9 +18,15 @@ int scaleDummy::getWeight()
     return 500;
 }
 
-void scaleDummy::calibrate()
+int scaleDummy::calibrate(int weight)
 {
-    Serial.println("calibrate call");
+    Serial.print("calibrate call for Scale element ");
+    Serial.println(scaleElementName);
+    Serial.print("Calibration Weight: ");
+    Serial.println(weight);
+//returns the multiplier
+    return 212;
+
 }
 
 void scaleDummy::tare(){
