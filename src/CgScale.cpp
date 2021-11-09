@@ -71,6 +71,11 @@ void setup()
 				  Serial.println("Incomming /htm -Event");
 				  request->send(SPIFFS, "/home.html", "text/html");
 			  });
+	server.on("/calibrateForm", HTTP_GET, [](AsyncWebServerRequest *request)
+			  {
+				  Serial.println("Incomming /htm -Event: /calibrateForm");
+				  request->send(SPIFFS, "/CalibrateForm.html", "text/html");
+			  });
 	server.on("/laser", HTTP_GET, [](AsyncWebServerRequest *request)
 			  {
 				  Serial.println("GET Laser status");
