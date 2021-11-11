@@ -64,7 +64,7 @@ void setup()
 	}
 
 	WiFi.softAP(ssid, password);
-
+	WiFi.softAPConfig(local_IP, gateway, subnet);
 	Serial.println();
 	Serial.print("IP address: ");
 	Serial.println(WiFi.softAPIP());
