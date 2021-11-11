@@ -3,9 +3,9 @@
 <html>
 
 <head>
-    <script type="text/javascript"></script>
-    <!--Code here-->
-    </script>
+
+
+
 </head>
 
 <body>
@@ -15,33 +15,108 @@
     <fieldset>
         <h2>Front Element</h2>
         <label for="CalibrationWeightFront">Calbration Weight</label>
-        <input name="CalibrationWeightFront" type="text" /><br><br>
-        <input name="CalibrateFront" type="submit" value="Calibrate" /><br><br>
+        <input id="CalibrationWeightFront" type="text" /><br><br>
+        <input id="submit_CalibrateFront" type="submit" value="Calibrate" /><br><br>
         <label for="scaleMultiplierFront">Scale Multiplier</label>
-        <input name="scaleMultiplierFront" type="text" readonly>
+        <input id="scaleMultiplierFront" type="text" readonly>
     </fieldset>
     <fieldset>
         <h2>Right Element</h2>
         <label for="CalibrationWeightRight">Calbration Weight</label>
-        <input name="CalibrationWeightRight" type="text" /><br><br>
-        <input name="CalibrateRight" type="submit" value="Calibrate" /><br><br>
+        <input id="CalibrationWeightRight" type="text" /><br><br>
+        <input id="submit_CalibrateRight" type="submit" value="Calibrate" /><br><br>
         <label for="scaleMultiplierRight">Scale Multiplier</label>
-        <input name="scaleMultiplierRight" type="text" readonly>
+        <input id="scaleMultiplierRight" type="text" readonly>
     </fieldset>
     <fieldset>
         <h2>Left Element</h2>
         <label for="CalibrationWeightLeft">Calbration Weight</label>
-        <input name="CalibrationWeightLeft" type="text" /><br><br>
-        <input name="CalibrateLefr" type="submit" value="Calibrate" /><br><br>
+        <input id="CalibrationWeightLeft" type="text" /><br><br>
+        <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br><br>
         <label for="scaleMultiplierLeft">Scale Multiplier</label>
-        <input name="scaleMultiplierLeft" type="text" readonly>
+        <input id="scaleMultiplierLeft" type="text" readonly>
     </fieldset>
+    <br><br>
+    <a href="/">Backhome</a>
 
-    
 </body>
 
 
-<a href="/">Backhone</a>
 
+<script type="text/javascript">
+
+    //POST function for front element
+    submitFront = document.getElementById("submit_CalibrateFront");
+    submitFront.onclick = function () {
+
+
+        // Sending and receiving data in JSON format using POST method
+        //
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/calibrate", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+                var json = JSON.parse(xhr.responseText);
+                var mutliplierFront = document.getElementById("scaleMultiplierFront")
+                //console.log(json.email + ", " + json.password;)
+                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                mutliplierFront.value = json.scaleMultiplier.toString();
+
+                //console.log(json.email + ", " + json.password;)
+            }
+        };
+        var weightFront = document.getElementById("CalibrationWeightFront").value;
+        var data = JSON.stringify({ "element": "front", "weight": weightFront });
+        xhr.send(data);
+    }
+    //POST function for right element
+    submitRight = document.getElementById("submit_CalibrateRight");
+    submitRight.onclick = function () {
+        // Sending and receiving data in JSON format using POST method
+        //
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/calibrate", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //console.log(xhr.responseText);
+                var json = JSON.parse(xhr.responseText);
+                var mutliplierRight = document.getElementById("scaleMultiplierRight")
+                //console.log(json.email + ", " + json.password;)
+                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                mutliplierRight.value = json.scaleMultiplier.toString();
+            }
+        };
+        var weightRight = document.getElementById("CalibrationWeightRight").value;
+        var data = JSON.stringify({ "element": "right", "weight": weightRight });
+        xhr.send(data);
+    }
+        //POST function for left element
+    submitLeft = document.getElementById("submit_CalibrateLeft");
+    submitLeft.onclick = function () {
+        // Sending and receiving data in JSON format using POST method
+        //
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/calibrate", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //console.log(xhr.responseText);
+                var json = JSON.parse(xhr.responseText);
+                var mutliplierLeft = document.getElementById("scaleMultiplierLeft")
+                //console.log(json.email + ", " + json.password;)
+                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                mutliplierLeft.value = json.scaleMultiplier.toString();
+            }
+        };
+        var weightLeft = document.getElementById("CalibrationWeightLeft").value;
+        var data = JSON.stringify({ "element": "left", "weight": weightLeft });
+        xhr.send(data);
+    }
+
+
+</script>
 
 </html>

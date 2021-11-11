@@ -114,7 +114,7 @@ void setup()
 				success = true;	
 			}
 			else if (element=="left"){
-				int scaleMultiplier = mainScaleRight->calibrate(jsonObj["weight"].as<int>());
+				int scaleMultiplier = mainScaleLeft->calibrate(jsonObj["weight"].as<int>());
 				responseJson["scaleMultiplier"] = String(scaleMultiplier);
 				success = true;	
 			}
