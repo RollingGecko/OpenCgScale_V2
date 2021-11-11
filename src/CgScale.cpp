@@ -7,16 +7,18 @@
 #include "ArduinoJson.h"
 
 #include "scale.h"
-
-const char *ssid = "MyESP32AP";
-const char *password = "testpassword";
+#include "config.h"
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-scaleInterface *frontScale = new scaleDummy("front Scale");
-scaleInterface *mainScaleLeft = new scaleDummy("main left Scale");
-scaleInterface *mainScaleRight = new scaleDummy("main right Scale");
+//Defines Scale dummies
+#ifdef SCALE_DUMMY
+	scaleInterface *frontScale = new scaleDummy("front Scale");
+	scaleInterface *mainScaleLeft = new scaleDummy("main left Scale");
+	scaleInterface *mainScaleRight = new scaleDummy("main right Scale");
+#endif
+
 AsyncWebSocketClient *globalClient = NULL;
 
 DynamicJsonDocument jsonMessage(1024);
@@ -39,12 +41,12 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 	}
 }
 
-void onUnknownRequest(AsyncWebServerRequest * request)
-	{
-		//Handle Unknown Request
-		Serial.println("unknowen Request");
-		request->send(404);
-	};
+void onUnknownRequest(AsyncWebServerRequest *request)
+{
+	//Handle Unknown Request
+	Serial.println("unknowen Request");
+	request->send(404);
+};
 
 void setup()
 {
@@ -103,42 +105,45 @@ void setup()
 			StaticJsonDocument<100> responseJson;
 			String element = jsonObj["element"].as<String>();
 			boolean success = false;
-			if (element=="front"){
+			if (element == "front")
+			{
 				int scaleMultiplier = frontScale->calibrate(jsonObj["weight"].as<int>());
 				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;	
+				success = true;
 			}
-			else if (element=="right"){
+			else if (element == "right")
+			{
 				int scaleMultiplier = mainScaleRight->calibrate(jsonObj["weight"].as<int>());
 				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;	
+				success = true;
 			}
-			else if (element=="left"){
+			else if (element == "left")
+			{
 				int scaleMultiplier = mainScaleLeft->calibrate(jsonObj["weight"].as<int>());
 				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;	
+				success = true;
 			}
-			else {
+			else
+			{
 
 				responseJson["message"] = "unknown Element";
 				Serial.println("unknown Element");
 			}
 
 			String response;
-			serializeJson(responseJson,response);
+			serializeJson(responseJson, response);
 
-			if (success){
+			if (success)
+			{
 				request->send(200, "application/json", response);
 			}
 			else
 			{
 				request->send(400, "application/json", response);
 			}
-			
 		});
 	server.addHandler(scaleCalibrateHandler);
 
-	
 	server.onNotFound(onUnknownRequest);
 
 	ws.onEvent(onWsEvent);
