@@ -10,6 +10,7 @@ class scaleInterface
         virtual ~scaleInterface(){}
         virtual int getWeight() = 0;
         virtual int calibrate(int weight) = 0;
+        virtual String getScaleMultiplier() = 0;
         virtual void tare() = 0;
 };
 
@@ -22,6 +23,7 @@ class scaleDummy : public scaleInterface
         scaleDummy(char *elementName);
         ~scaleDummy();
         int getWeight();
+        String getScaleMultiplier();
         int calibrate(int weight);
         void tare();
 };

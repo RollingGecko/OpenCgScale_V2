@@ -29,6 +29,13 @@ int scaleDummy::calibrate(int weight)
 
 }
 
+String scaleDummy::getScaleMultiplier()
+{
+    String value = "212";
+    return value;
+}
+
+
 void scaleDummy::tare(){
     Serial.print ("Tare scale Elenment ");
     Serial.println(scaleElementName);

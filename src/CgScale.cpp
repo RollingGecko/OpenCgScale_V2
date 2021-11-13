@@ -48,6 +48,25 @@ void onUnknownRequest(AsyncWebServerRequest *request)
 	request->send(404);
 };
 
+boolean writeScaleMultiplierToFile(scaleInterface *front, scaleInterface *right, scaleInterface *left){
+	boolean success;
+	File scaleMultiplierConfigFile = SPIFFS.open("/config/scaleMultiplier.json","w");
+	if(!scaleMultiplierConfigFile) {
+		Serial.println ("Failed to open 'config/scaleMultiplier.json'");
+		success = false;
+
+	}
+	else{
+		DynamicJsonDocument scaleMuliplierConfigJson(1000);
+		scaleMuliplierConfigJson["scaleMultiplierFront"] = front->getScaleMultiplier();
+		scaleMuliplierConfigJson["scaleMultiplierRight"] = right->getScaleMultiplier();
+		scaleMuliplierConfigJson["scaleMultiplierLeft"] = left->getScaleMultiplier();
+		serializeJson(scaleMuliplierConfigJson, scaleMultiplierConfigFile);
+		success = true;
+		}
+	scaleMultiplierConfigFile.close();
+	return success;
+}
 void setup()
 {
 	Serial.begin(115200);
@@ -99,6 +118,37 @@ void setup()
 
 				  request->send(200, "text/plain", "tbd tara Scale");
 			  });
+	server.on("/scale/storeMultiplier",HTTP_POST,[](AsyncWebServerRequest *request)
+			{
+				boolean successfull;
+				successfull = writeScaleMultiplierToFile(frontScale, mainScaleRight, mainScaleLeft);
+				if (successfull){
+				 	request->send(200, "text/plain", "ScaleMultiplier stored in config/scaleMultiplier.json");
+				}
+				else{
+					request->send(400, "text/plain", "Failed to store config/scaleMultiplier.json");
+				}
+			});
+	server.on("/debug/scaleMultiplierJson", HTTP_GET,[](AsyncWebServerRequest *request)
+			{
+				if (SPIFFS.exists("/config/scaleMultiplier.json")){
+					File configFile = SPIFFS.open("/config/scaleMultiplier.json","r");
+					String message;
+					// Serial.print("Content of JSON-File: ");
+					// Serial.println(message);
+					while (configFile.available())
+					{
+						message += char(configFile.read());
+					}	
+					request->send(200,"text/plain", message);
+
+					configFile.close();
+				}
+				else{	
+					request ->send(400, "text/plain","File does not exist!");	
+				}
+				
+			});
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
