@@ -24,6 +24,58 @@ AsyncWebSocketClient *globalClient = NULL;
 DynamicJsonDocument jsonMessage(1024);
 JsonObject root = jsonMessage.to<JsonObject>();
 
+//functions to store and load scaleMulitplier
+boolean writeScaleMultiplierToFile(scaleInterface *front, scaleInterface *right, scaleInterface *left)
+{
+	boolean success;
+	File scaleMultiplierConfigFile = SPIFFS.open("/config/scaleMultiplier.json", "w");
+	if (!scaleMultiplierConfigFile)
+	{
+		Serial.println("Failed to open 'config/scaleMultiplier.json'");
+		success = false;
+	}
+	else
+	{
+		DynamicJsonDocument scaleMuliplierConfigJson(1000);
+		scaleMuliplierConfigJson["scaleMultiplierFront"] = front->getScaleMultiplier();
+		scaleMuliplierConfigJson["scaleMultiplierRight"] = right->getScaleMultiplier();
+		scaleMuliplierConfigJson["scaleMultiplierLeft"] = left->getScaleMultiplier();
+		serializeJson(scaleMuliplierConfigJson, scaleMultiplierConfigFile);
+		success = true;
+	}
+	scaleMultiplierConfigFile.close();
+	return success;
+}
+
+void loadScaleMultiplierfromFile(scaleInterface *front, scaleInterface *right, scaleInterface *left)
+{
+
+	
+	if (!SPIFFS.exists("/config/scaleMultiplier.json"))
+	{
+		Serial.println("Failed to open 'config/scaleMultiplier.json'; Standard Multiplier is used ");
+		front->setScaleMultiplier(SCALEMULTIPLIER_FRONT);
+		right->setScaleMultiplier(SCALEMULTIPLIER_RIGHT);
+		left->setScaleMultiplier(SCALEMULTIPLIER_LEFT);
+	}
+	else
+	{
+		File scaleMultiplierConfigFile = SPIFFS.open("/config/scaleMultiplier.json", "r");
+		DynamicJsonDocument scaleMuliplierConfigJson(1000);
+
+		deserializeJson(scaleMuliplierConfigJson, scaleMultiplierConfigFile);
+
+		front->setScaleMultiplier(scaleMuliplierConfigJson["scaleMultiplierFront"]);
+		right->setScaleMultiplier(scaleMuliplierConfigJson["scaleMultiplierRight"]);
+		left->setScaleMultiplier(scaleMuliplierConfigJson["scaleMultiplierLeft"]);
+		
+		scaleMultiplierConfigFile.close();
+
+	}
+};
+
+//REST Handler
+
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
 
@@ -48,25 +100,7 @@ void onUnknownRequest(AsyncWebServerRequest *request)
 	request->send(404);
 };
 
-boolean writeScaleMultiplierToFile(scaleInterface *front, scaleInterface *right, scaleInterface *left){
-	boolean success;
-	File scaleMultiplierConfigFile = SPIFFS.open("/config/scaleMultiplier.json","w");
-	if(!scaleMultiplierConfigFile) {
-		Serial.println ("Failed to open 'config/scaleMultiplier.json'");
-		success = false;
 
-	}
-	else{
-		DynamicJsonDocument scaleMuliplierConfigJson(1000);
-		scaleMuliplierConfigJson["scaleMultiplierFront"] = front->getScaleMultiplier();
-		scaleMuliplierConfigJson["scaleMultiplierRight"] = right->getScaleMultiplier();
-		scaleMuliplierConfigJson["scaleMultiplierLeft"] = left->getScaleMultiplier();
-		serializeJson(scaleMuliplierConfigJson, scaleMultiplierConfigFile);
-		success = true;
-		}
-	scaleMultiplierConfigFile.close();
-	return success;
-}
 void setup()
 {
 	Serial.begin(115200);
@@ -199,6 +233,10 @@ void setup()
 	ws.onEvent(onWsEvent);
 	server.addHandler(&ws);
 	server.begin();
+	loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
+	Serial.print("ScaleMultiplier: ");
+	Serial.println(frontScale->getScaleMultiplier());
+	
 }
 
 void loop()
