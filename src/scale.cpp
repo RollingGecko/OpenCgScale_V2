@@ -15,7 +15,7 @@ scaleDummy::~scaleDummy()
 int scaleDummy::getWeight()
 {
     Serial.println("getWeight Call");
-    return 500;
+    return weight;
 }
 
 int scaleDummy::calibrate(int weight)
@@ -44,3 +44,9 @@ void scaleDummy::tare(){
     Serial.print ("Tare scale Elenment ");
     Serial.println(scaleElementName);
 }
+
+void scaleDummy::setDummyWeight(int dummyWeight){
+    weight = dummyWeight;
+    //String message = "Set weight of " + String(scaleElementName) + " to:" + weight;
+    //Serial.println(message);
+};
