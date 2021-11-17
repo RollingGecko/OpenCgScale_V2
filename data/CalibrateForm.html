@@ -106,7 +106,6 @@
                 //console.log(xhr.responseText);
                 var json = JSON.parse(xhr.responseText);
                 var mutliplierLeft = document.getElementById("scaleMultiplierLeft")
-                //console.log(json.email + ", " + json.password;)
                 console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
                 mutliplierLeft.value = json.scaleMultiplier.toString();
             }

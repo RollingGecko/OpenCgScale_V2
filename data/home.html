@@ -12,20 +12,42 @@
         ws.onmessage = function (evt) {
             var jsonMessage = JSON.parse(evt.data);
 
-            document.getElementById("Scale1").innerHTML = "Scale1: " + jsonMessage.Scale1 + " kg";
-            document.getElementById("Scale2").innerHTML = "Scale2: " + jsonMessage.Scale2 + " kg";
-            document.getElementById("Scale3").innerHTML = "Scale3: " + jsonMessage.Scale3 + " kg";
+            // document.getElementById("Scale1").innerHTML = "Scale1: " + jsonMessage.Scale1 + " kg";
+            // document.getElementById("Scale2").innerHTML = "Scale2: " + jsonMessage.Scale2 + " kg";
+            // document.getElementById("Scale3").innerHTML = "Scale3: " + jsonMessage.Scale3 + " kg";
+
+            document.getElementById("weightFront").value = jsonMessage.weightFront + " kg";
+            document.getElementById("weightRight").value = jsonMessage.weightRight+ " kg";
+            document.getElementById("weightLeft").value = jsonMessage.weightLeft + " kg";
+
+            //Calculate Total Weight
+
+            var totalWeight = jsonMessage.weightFront + jsonMessage.weightRight+jsonMessage.weightLeft
+            document.getElementById("Total").value = totalWeight + " kg";
+
         };
 
     </script>
 </head>
 
 <body>
-    <div>
-        <p id="Scale1">Not connected</p>
+    <fieldset id = "ScaleReadings">
+        <!-- <p id="Scale1">Not connected</p>
         <p id="Scale2">Not connected</p>
-        <p id="Scale3">Not connected</p>
-    </div>
+        <p id="Scale3">Not connected</p> -->
+        <label for="weightFront">Weight Front</label>
+        <input id="weightFront" type = "text" readonly><br>
+        
+        <label for="weightLeft">Weight Left</label>
+        <input id="weightLeft" type = "text" readonly><br>
+
+        <label for="weightRight">Weight Right</label>
+        <input id="weightRight" type = "text" readonly><br>
+        <br>
+        <br>
+        <label for="Total">Weight total</label>
+        <input id="Total" type = "text" readonly><br>
+    </fieldset>
 </body>
 </html>
  

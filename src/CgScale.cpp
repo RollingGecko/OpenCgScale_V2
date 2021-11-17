@@ -262,9 +262,9 @@ void loop()
 		//root["Scale1"] = String(random(0, 20));
 		//root["Scale2"] = String(random(0, 20));
 		//root["Scale3"] = String(random(0, 20));
-		root["Scale1"] = frontScale->getWeight();
-		root["Scale2"] = mainScaleLeft->getWeight();
-		root["Scale3"] = mainScaleRight->getWeight();
+		root["weightFront"] = frontScale->getWeight();
+		root["weightLeft"] = mainScaleLeft->getWeight();
+		root["weightRight"] = mainScaleRight->getWeight();
 		//ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
 		String jsonString;
 		serializeJson(root, jsonString);
