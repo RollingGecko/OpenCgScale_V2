@@ -2,7 +2,6 @@
 #define SCALE_H
 
 #include <Arduino.h>
-
 class scaleInterface
 {
     public:
@@ -13,6 +12,7 @@ class scaleInterface
         virtual int getScaleMultiplier() = 0;
         virtual void setScaleMultiplier(int multiplier) = 0;
         virtual void tare() = 0;
+        virtual void setDummyWeight(int dummyWeight) = 0;
 };
 
 class scaleDummy : public scaleInterface
@@ -20,6 +20,7 @@ class scaleDummy : public scaleInterface
     private:
         char *scaleElementName;
         int scaleMultiplier;
+        int weight = 500;
 
     public:
         scaleDummy(char *elementName);
@@ -28,6 +29,7 @@ class scaleDummy : public scaleInterface
         int getScaleMultiplier();
         void setScaleMultiplier(int multiplier);
         int calibrate(int weight);
+        void setDummyWeight(int dummyWeight);
         void tare();
 };
 

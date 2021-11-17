@@ -6,9 +6,8 @@
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 
-#include "scale.h"
 #include "config.h"
-
+#include "scale.h"
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
@@ -183,6 +182,23 @@ void setup()
 				}
 				
 			});
+	#ifdef SCALE_DUMMY
+	AsyncCallbackJsonWebHandler *setWeightHandler = new AsyncCallbackJsonWebHandler("/debug/setWeight", [](AsyncWebServerRequest *request, JsonVariant &json)
+		{
+			JsonObject jsonObj = json.as<JsonObject>();
+			StaticJsonDocument<100> responseJson;
+			
+			frontScale->setDummyWeight (jsonObj["frontWeight"].as<int>());
+			mainScaleRight->setDummyWeight (jsonObj["rightWeight"].as<int>());
+			mainScaleLeft->setDummyWeight (jsonObj["leftWeight"].as<int>());
+
+			request->send(200, "text/plain", "DummyWeight set");
+
+		});
+
+		server.addHandler(setWeightHandler);
+
+	#endif
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
