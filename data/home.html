@@ -2,32 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="text/javascript">
-        var ws = new WebSocket("ws://192.168.0.1/ws");
-
-        ws.onopen = function() {
-            console.log("Websocket connected");
-         };
-
-        ws.onmessage = function (evt) {
-            var jsonMessage = JSON.parse(evt.data);
-
-            // document.getElementById("Scale1").innerHTML = "Scale1: " + jsonMessage.Scale1 + " kg";
-            // document.getElementById("Scale2").innerHTML = "Scale2: " + jsonMessage.Scale2 + " kg";
-            // document.getElementById("Scale3").innerHTML = "Scale3: " + jsonMessage.Scale3 + " kg";
-
-            document.getElementById("weightFront").value = jsonMessage.weightFront + " kg";
-            document.getElementById("weightRight").value = jsonMessage.weightRight+ " kg";
-            document.getElementById("weightLeft").value = jsonMessage.weightLeft + " kg";
-
-            //Calculate Total Weight
-
-            var totalWeight = jsonMessage.weightFront + jsonMessage.weightRight+jsonMessage.weightLeft
-            document.getElementById("Total").value = totalWeight + " kg";
-
-        };
-
-    </script>
+   
 </head>
 
 <body>
@@ -48,7 +23,72 @@
         <label for="Total">Weight total</label>
         <input id="Total" type = "text" readonly><br>
     </fieldset>
+    <br><br>
+    <fieldset>
+        <label for="distanceGear">Distance main gear [mm]</label> 
+        <input id="distanceGear" type = "text" value="1000"><br>
+    
+        <!-- <button id="setDistanceGear">set</button> <br><br> -->
+
+        <label for="positionCG">Position of CG [mm]</label>
+        <input id="positionCG" type="text" readonly>
+
+    </fieldset>
+    <br>
+    <br>
+    <a href="/calibrateForm">Calibrate</a>
 </body>
+
+
+<script type="text/javascript">
+    var ws = new WebSocket("ws://192.168.0.1/ws");
+
+    var leftScaleWeight = 0;
+    var rightScaleWeight = 0;
+    var frontScaleWeight = 0;
+
+
+    ws.onopen = function() {
+        console.log("Websocket connected");
+     };
+
+    ws.onmessage = function (evt) {
+        var jsonMessage = JSON.parse(evt.data);
+
+        // document.getElementById("Scale1").innerHTML = "Scale1: " + jsonMessage.Scale1 + " kg";
+        // document.getElementById("Scale2").innerHTML = "Scale2: " + jsonMessage.Scale2 + " kg";
+        // document.getElementById("Scale3").innerHTML = "Scale3: " + jsonMessage.Scale3 + " kg";
+
+        frontScaleWeight = jsonMessage.weightFront;
+        rightScaleWeight = jsonMessage.weightRight;
+        leftScaleWeight = jsonMessage.weightLeft
+        document.getElementById("weightFront").value = frontScaleWeight + " g";
+        document.getElementById("weightRight").value = rightScaleWeight + " g";
+        document.getElementById("weightLeft").value =  leftScaleWeight + " g";
+
+                //CalculateCG
+                var mainGearWeight = leftScaleWeight + rightScaleWeight;
+                var totalWeight = jsonMessage.weightFront + jsonMessage.weightRight+jsonMessage.weightLeft;
+                var gearDistance = document.getElementById("distanceGear").value;
+                var cgFromFront = gearDistance - (gearDistance * frontScaleWeight) / totalWeight;
+        
+        document.getElementById("positionCG").value = cgFromFront;      
+        document.getElementById("Total").value = totalWeight + " g";
+
+    };
+
+    window.onload = prepareButton;
+
+function prepareButton(){
+
+    //setDistanceButton = 
+    // document.getElementById("setDistanceGear").onclick = function (){
+    //     console.log("set Button clicked");
+
+    // };
+
+}
+</script>
 </html>
- 
-<a href="/calibrateForm">Calibrate</a>
+
+
