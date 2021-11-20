@@ -1,40 +1,61 @@
 <!-- HtmlView:on -->
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-   
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CG Scale 2.0</title>
+
+    <style>
+        .formField .labelField {
+            position: absolute;
+        }
+        
+        .formField .inputField {
+            margin-left: 15em;
+            text-align: right;
+            width: 6em;
+        }
+
+    </style>
 </head>
 
 <body>
-    <fieldset id = "ScaleReadings">
+    <h1>CG Scale</h1>
+    <h4>Version 2.0</h4>
+    <fieldset id = "ScaleReadings" class="formField">
+        <legend>Weights</legend>
         <!-- <p id="Scale1">Not connected</p>
         <p id="Scale2">Not connected</p>
         <p id="Scale3">Not connected</p> -->
-        <label for="weightFront">Weight Front</label>
-        <input id="weightFront" type = "text" readonly><br>
+        <label for="weightFront" class="labelField">Weight Front</label>
+        <input id="weightFront" type = "text" class="inputField" readonly><br>
         
-        <label for="weightLeft">Weight Left</label>
-        <input id="weightLeft" type = "text" readonly><br>
+        <label for="weightLeft" class="labelField">Weight Left</label>
+        <input id="weightLeft" type = "text" class="inputField" readonly><br>
 
-        <label for="weightRight">Weight Right</label>
-        <input id="weightRight" type = "text" readonly><br>
-        <br>
-        <br>
-        <label for="Total">Weight total</label>
-        <input id="Total" type = "text" readonly><br>
-    </fieldset>
-    <br><br>
-    <fieldset>
-        <label for="distanceGear">Distance main gear [mm]</label> 
-        <input id="distanceGear" type = "text" value="1000"><br>
-    
-        <!-- <button id="setDistanceGear">set</button> <br><br> -->
-
-        <label for="positionCG">Position of CG [mm]</label>
-        <input id="positionCG" type="text" readonly>
-
+        <label for="weightRight" class="labelField">Weight Right</label>
+        <input id="weightRight" type = "text" class="inputField" readonly><br>
+        <hr>
+        <label for="Total" class="labelField">Weight total</label>
+        <input id="Total" type = "text" class = "inputField" readonly><br>
     </fieldset>
     <br>
+    <fieldset class="formField">
+        <legend>CG Position</legend>
+        <label for="distanceGear" class = "labelField">Distance main gear [mm]</label> 
+        <input id="distanceGear" type = "text" class="inputField" value="1000" inputmode="decimal"><br>
+        <label for="positionCG"class = "labelField">Position of CG [mm]</label>
+        <input id="positionCG" type="text" class="inputField" readonly>
+    </fieldset><br>
+    <fieldset>
+        <label for="laserCheckbox">Laser on</label>
+        <input id="laserCheckbox" type="checkbox">
+    </fieldset>
+    <br>
+    <button id="taraButton">Tara</button> 
+    <br>
+    <hr>
     <br>
     <a href="/calibrateForm">Calibrate</a>
 </body>
@@ -71,7 +92,7 @@
                 var totalWeight = jsonMessage.weightFront + jsonMessage.weightRight+jsonMessage.weightLeft;
                 var gearDistance = document.getElementById("distanceGear").value;
                 var cgFromFront = gearDistance - (gearDistance * frontScaleWeight) / totalWeight;
-        
+                cgFromFront = Math.round(cgFromFront);
         document.getElementById("positionCG").value = cgFromFront;      
         document.getElementById("Total").value = totalWeight + " g";
 
