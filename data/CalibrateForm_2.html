@@ -1,0 +1,104 @@
+<!-- HtmlView:on -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale: Calibrate Elements</title>
+
+    <style>
+        .formField .labelField {
+            position: absolute;
+        }
+
+        .formField .inputField {
+            margin-left: 10em;
+            text-align: right;
+            margin-bottom: 0.5em;
+            width: 6em;
+        }
+
+        .selectField .labelField {
+            position: absolute;
+        }
+
+        .selectField .radioField {
+            margin-left: 8em;
+            margin-bottom: 0.5em;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h3>Scale Calibration</h3>
+
+    <fieldset class="formField">
+        <legend>Calibration</legend>
+
+        <label for="CalibrationWeight" class="labelField">Calbration Weight</label>
+        <input id="CalibrationWeight" type="text" class="inputField" autofocus inputmode="numeric" />
+        <input id="submit_Calibrate" type="submit" value="Calibrate" /><br>
+        <label for="scaleMultiplier" class="labelField">Scale Multiplier</label>
+        <input id="scaleMultiplier" type="text" placeholder="Result" class="inputField" readonly>
+    </fieldset>
+
+    <fieldset id="selectElement" class="selectField">
+        <label for="frontSelect" class="labelField">Front Element</label>
+        <input type="radio" id="frontSelect" class="radioField" name="elementSelect" value="front"> <br>
+
+        <label for="rightSelect" class="labelField">Right Element</label>
+        <input type="radio" id="rightSelect" class="radioField" name="elementSelect"value="right"> <br>
+
+        <label for="leftSelect" class="labelField">Left Element</label>
+        <input type="radio" id="leftSelect" class="radioField" name="elementSelect" value="left"> <br>
+    </fieldset>
+    <br><br>
+    <a href="/">Backhome</a>
+    <p id="testResult">Text</p>
+
+</body>
+
+
+
+<script type="text/javascript">
+    //POST function for front element
+
+
+    submitButton = document.getElementById("submit_Calibrate");
+    submitButton.onclick = function () {
+        document.getElementById("scaleMultiplier").value = '';
+        //read selected Element from Radio Button
+        var elementSelect = document.getElementsByName("elementSelect");
+        var selectedElement
+        for (i = 0; i < elementSelect.length; i++) {
+            if (elementSelect[i].checked)
+                selectedElement = elementSelect[i].value;
+                console.log("Element selected: " + selectedElement);
+        };
+
+        // Sending and receiving data in JSON format using POST method
+        //
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/calibrate", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+                var json = JSON.parse(xhr.responseText);
+                var mutliplier = document.getElementById("scaleMultiplier")
+                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                mutliplier.value = json.scaleMultiplier.toString();
+            }
+        };
+        var weight = document.getElementById("CalibrationWeight").value;
+        var data = JSON.stringify({ "element": selectedElement, "weight": weight});
+        console.log("JSON build: "+data);
+        xhr.send(data);
+    }
+    
+</script>
+
+</html>
