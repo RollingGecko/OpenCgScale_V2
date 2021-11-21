@@ -20,12 +20,13 @@ int scaleDummy::getWeight()
 
 int scaleDummy::calibrate(int weight)
 {
+    setScaleMultiplier(weight/2);
     Serial.print("calibrate call for Scale element ");
     Serial.println(scaleElementName);
     Serial.print("Calibration Weight: ");
     Serial.println(weight);
 //returns the multiplier
-    return 212;
+    return getScaleMultiplier();
 
 }
 

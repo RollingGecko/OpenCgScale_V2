@@ -153,13 +153,15 @@ void setup()
 			  });
 	server.on("/scale/storeMultiplier",HTTP_POST,[](AsyncWebServerRequest *request)
 			{
-				boolean successfull;
+				boolean successfull = false;
 				successfull = writeScaleMultiplierToFile(frontScale, mainScaleRight, mainScaleLeft);
 				if (successfull){
 				 	request->send(200, "text/plain", "ScaleMultiplier stored in config/scaleMultiplier.json");
+					 Serial.println("JSON stored");					 
 				}
 				else{
 					request->send(400, "text/plain", "Failed to store config/scaleMultiplier.json");
+					Serial.println("Failed to store JSON");
 				}
 			});
 	server.on("/debug/scaleMultiplierJson", HTTP_GET,[](AsyncWebServerRequest *request)

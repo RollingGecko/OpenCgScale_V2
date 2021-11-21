@@ -51,7 +51,12 @@
         <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br>
         <label for="scaleMultiplierLeft" class="labelField">Scale Multiplier</label>
         <input id="scaleMultiplierLeft" class="inputField" type="text" readonly>
+    </fieldset><fieldset>
+        <legend>Store settings</legend>
+        <button id="storeButton">Store</button>
+
     </fieldset>
+
     <br><br>
     <a href="/">Backhome</a>
 
@@ -141,6 +146,20 @@
         xhr.send(data);
     }
 
+    document.getElementById("storeButton").onclick=function(){
+        console.log("Storefunction");
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/storeMultiplier", true);
+        //xhr.setRequestHeader("Content-Type", "plain/text");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+                document.getElementById("storeButton").innerHTML="Button &#10003;"
+            }
+        };    
+        xhr.send();
+       
+    }
 
 </script>
 
