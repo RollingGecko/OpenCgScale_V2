@@ -259,9 +259,6 @@ void loop()
 {
 	if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
 	{
-		//root["Scale1"] = String(random(0, 20));
-		//root["Scale2"] = String(random(0, 20));
-		//root["Scale3"] = String(random(0, 20));
 		root["weightFront"] = frontScale->getWeight();
 		root["weightLeft"] = mainScaleLeft->getWeight();
 		root["weightRight"] = mainScaleRight->getWeight();
