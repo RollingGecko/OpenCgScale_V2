@@ -205,29 +205,38 @@ void setup()
 			StaticJsonDocument<100> responseJson;
 			String element = jsonObj["element"].as<String>();
 			boolean success = false;
-			if (element == "front")
+			int scaleMultiplierFromJson = jsonObj["weight"].as<int>();
+			if (scaleMultiplierFromJson == 0)
 			{
-				int scaleMultiplier = frontScale->calibrate(jsonObj["weight"].as<int>());
-				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;
-			}
-			else if (element == "right")
-			{
-				int scaleMultiplier = mainScaleRight->calibrate(jsonObj["weight"].as<int>());
-				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;
-			}
-			else if (element == "left")
-			{
-				int scaleMultiplier = mainScaleLeft->calibrate(jsonObj["weight"].as<int>());
-				responseJson["scaleMultiplier"] = String(scaleMultiplier);
-				success = true;
+				responseJson["message"] = "Weight must be send";
 			}
 			else
 			{
 
-				responseJson["message"] = "unknown Element";
-				Serial.println("unknown Element");
+				if (element == "front")
+				{
+					int scaleMultiplier = frontScale->calibrate(scaleMultiplierFromJson);
+					responseJson["scaleMultiplier"] = String(scaleMultiplier);
+					success = true;
+				}
+				else if (element == "right")
+				{
+					int scaleMultiplier = mainScaleRight->calibrate(scaleMultiplierFromJson);
+					responseJson["scaleMultiplier"] = String(scaleMultiplier);
+					success = true;
+				}
+				else if (element == "left")
+				{
+					int scaleMultiplier = mainScaleLeft->calibrate(scaleMultiplierFromJson);
+					responseJson["scaleMultiplier"] = String(scaleMultiplier);
+					success = true;
+				}
+				else
+				{
+
+					responseJson["message"] = "unknown Element";
+					Serial.println("unknown Element");
+				}
 			}
 
 			String response;
