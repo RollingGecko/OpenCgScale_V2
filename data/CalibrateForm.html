@@ -3,38 +3,54 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale: Calibrate Elements</title>
 
 
+    <style>
+        .formField .labelField {
+            position: absolute;
+        }
+
+        .formField .inputField {
+            margin-left: 10em;
+            text-align: right;
+            margin-bottom: 0.5em;
+            width: 6em;
+        }
+    </style>
 
 </head>
 
 <body>
 
-    <h1>Scale Calibration</h1>
+    <h1>CG Scale</h1>
+    <h4>Calibrate</h4>
 
-    <fieldset>
-        <h2>Front Element</h2>
-        <label for="CalibrationWeightFront">Calbration Weight</label>
-        <input id="CalibrationWeightFront" type="text" /><br><br>
-        <input id="submit_CalibrateFront" type="submit" value="Calibrate" /><br><br>
-        <label for="scaleMultiplierFront">Scale Multiplier</label>
-        <input id="scaleMultiplierFront" type="text" readonly>
+    <fieldset class="formField">
+        <legend>Front Element</legend>
+        <label for="CalibrationWeightFront" class="labelField">Calbration Weight</label>
+        <input id="CalibrationWeightFront" class="inputField" type="text" required/>
+        <input id="submit_CalibrateFront" type="submit" value="Calibrate" /><br>
+        <label for="scaleMultiplierFront" class="labelField">Scale Multiplier</label>
+        <input id="scaleMultiplierFront" class="inputField" type="text" readonly>
     </fieldset>
-    <fieldset>
-        <h2>Right Element</h2>
-        <label for="CalibrationWeightRight">Calbration Weight</label>
-        <input id="CalibrationWeightRight" type="text" /><br><br>
-        <input id="submit_CalibrateRight" type="submit" value="Calibrate" /><br><br>
-        <label for="scaleMultiplierRight">Scale Multiplier</label>
-        <input id="scaleMultiplierRight" type="text" readonly>
+    <fieldset class="formField">
+        <legend>Right Element</legend>
+        <label for="CalibrationWeightRight" class="labelField">Calbration Weight</label>
+        <input id="CalibrationWeightRight" class="inputField" type="text" />
+        <input id="submit_CalibrateRight" type="submit" value="Calibrate" /><br>
+        <label for="scaleMultiplierRight" class="labelField">Scale Multiplier</label>
+        <input id="scaleMultiplierRight" class="inputField" type="text" readonly>
     </fieldset>
-    <fieldset>
-        <h2>Left Element</h2>
-        <label for="CalibrationWeightLeft">Calbration Weight</label>
-        <input id="CalibrationWeightLeft" type="text" /><br><br>
-        <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br><br>
-        <label for="scaleMultiplierLeft">Scale Multiplier</label>
-        <input id="scaleMultiplierLeft" type="text" readonly>
+    <fieldset class="formField">
+        <legend>Left Element</legend>
+        <label for="CalibrationWeightLeft" class="labelField">Calbration Weight</label>
+        <input id="CalibrationWeightLeft" class="inputField" type="text" />
+        <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br>
+        <label for="scaleMultiplierLeft" class="labelField">Scale Multiplier</label>
+        <input id="scaleMultiplierLeft" class="inputField" type="text" readonly>
     </fieldset>
     <br><br>
     <a href="/">Backhome</a>
@@ -49,9 +65,10 @@
     submitFront = document.getElementById("submit_CalibrateFront");
     submitFront.onclick = function () {
 
-
+        console.log("Calibrate Front");
         // Sending and receiving data in JSON format using POST method
         //
+        //ToDo: Check Weight Field for vaild Data
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/scale/calibrate", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -74,8 +91,12 @@
     //POST function for right element
     submitRight = document.getElementById("submit_CalibrateRight");
     submitRight.onclick = function () {
+        console.log("Calibrate right");
+
         // Sending and receiving data in JSON format using POST method
         //
+        
+        //ToDo: Check Weight Field for vaild Data
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/scale/calibrate", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -93,11 +114,15 @@
         var data = JSON.stringify({ "element": "right", "weight": weightRight });
         xhr.send(data);
     }
-        //POST function for left element
-    submitLeft = document.getElementById("submit_CalibrateLeft");
+    //POST function for left element
+    const submitLeft = document.getElementById("submit_CalibrateLeft");
     submitLeft.onclick = function () {
+        console.log("Calibrate left");
+
         // Sending and receiving data in JSON format using POST method
         //
+        
+        //ToDo: Check Weight Field for vaild Data
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/scale/calibrate", true);
         xhr.setRequestHeader("Content-Type", "application/json");
