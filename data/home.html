@@ -25,9 +25,7 @@
     <h4>Version 2.0</h4>
     <fieldset id = "ScaleReadings" class="formField">
         <legend>Weights</legend>
-        <!-- <p id="Scale1">Not connected</p>
-        <p id="Scale2">Not connected</p>
-        <p id="Scale3">Not connected</p> -->
+     
         <label for="weightFront" class="labelField">Weight Front</label>
         <input id="weightFront" type = "text" class="inputField" readonly><br>
         
@@ -76,10 +74,6 @@
     ws.onmessage = function (evt) {
         var jsonMessage = JSON.parse(evt.data);
 
-        // document.getElementById("Scale1").innerHTML = "Scale1: " + jsonMessage.Scale1 + " kg";
-        // document.getElementById("Scale2").innerHTML = "Scale2: " + jsonMessage.Scale2 + " kg";
-        // document.getElementById("Scale3").innerHTML = "Scale3: " + jsonMessage.Scale3 + " kg";
-
         frontScaleWeight = jsonMessage.weightFront;
         rightScaleWeight = jsonMessage.weightRight;
         leftScaleWeight = jsonMessage.weightLeft
@@ -94,21 +88,30 @@
                 var cgFromFront = gearDistance - (gearDistance * frontScaleWeight) / totalWeight;
                 cgFromFront = Math.round(cgFromFront);
         document.getElementById("positionCG").value = cgFromFront;      
-        document.getElementById("Total").value = totalWeight + " g";
+        document.getElementById("Total",).value = totalWeight + " g";
 
     };
 
     window.onload = prepareButton;
 
-function prepareButton(){
+    laserCheckbox = document.getElementById("laserCheckbox");
+        laserCheckbox.onclick = function () {
+            if (laserCheckbox.checked) {
+                console.log("Laser on");
+            }
+            else {
+                console.log("Laser off");
+            }
+        };
+    document.getElementById("taraButton").onclick = function(){
+        console.log("Scale tara.");
+    };
+    
+    function prepareButton(){
 
-    //setDistanceButton = 
-    // document.getElementById("setDistanceGear").onclick = function (){
-    //     console.log("set Button clicked");
-
-    // };
 
 }
+
 </script>
 </html>
 
