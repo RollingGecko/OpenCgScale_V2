@@ -135,11 +135,11 @@ void setup()
 				  Serial.println("GET Laser status");
 				  request->send(200, "text/plain", "tbd Laserstatus");
 			  });
-	server.on("/laser", HTTP_POST, [](AsyncWebServerRequest *request)
-			  {
-				  Serial.println("POST Laser status");
-				  request->send(200, "text/plain", "tbd ToggleLaserStatus");
-			  });
+	// server.on("/laser", HTTP_POST, [](AsyncWebServerRequest *request)
+	// 		  {
+	// 			  Serial.println("POST Laser status");
+	// 			  request->send(200, "text/plain", "Laser toggled");
+	// 		  });
 	server.on("/scale/tara", HTTP_POST, [](AsyncWebServerRequest *request)
 			  {
 				  Serial.println("POST tara");
@@ -199,6 +199,17 @@ void setup()
 		});
 
 		server.addHandler(setWeightHandler);
+
+			AsyncCallbackJsonWebHandler *setLaser = new AsyncCallbackJsonWebHandler("/laser", [](AsyncWebServerRequest *request, JsonVariant &json)
+		{
+			JsonObject jsonObj = json.as<JsonObject>();
+			boolean laserStatus = jsonObj["laserOn"];
+		//ToDo LaserHandler
+			request->send(200, "text/plain", "Laser on: " + String(laserStatus));
+
+		});
+
+		server.addHandler(setLaser);
 
 	#endif
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)

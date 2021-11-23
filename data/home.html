@@ -96,15 +96,39 @@
 
     laserCheckbox = document.getElementById("laserCheckbox");
         laserCheckbox.onclick = function () {
-            if (laserCheckbox.checked) {
+            var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/laser", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //var responseText = JSON.parse(xhr.responseText);
+                console.log("Response for Scale: "+ xhr.responseText);
+                //console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+            }
+        };
+        var laserStatus = false;
+        if (laserCheckbox.checked) {
                 console.log("Laser on");
+                laserStatus = true;
             }
             else {
                 console.log("Laser off");
+                laserStatus=false;
             }
+        var data = JSON.stringify({ "laserOn": laserStatus});
+        xhr.send(data);
         };
     document.getElementById("taraButton").onclick = function(){
         console.log("Scale tara.");
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/scale/tara", true);
+        //xhr.setRequestHeader("Content-Type", "plain/text");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };    
+        xhr.send();
     };
     
     function prepareButton(){
