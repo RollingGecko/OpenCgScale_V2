@@ -14,7 +14,7 @@ scaleDummy::~scaleDummy()
 
 int scaleDummy::getWeight()
 {
-    Serial.println("getWeight Call");
+    //Serial.println("getWeight Call");
     return weight;
 }
 
