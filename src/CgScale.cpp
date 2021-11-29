@@ -17,7 +17,12 @@ AsyncWebSocket ws("/ws");
 	scaleInterface *mainScaleLeft = new scaleDummy("main left Scale");
 	scaleInterface *mainScaleRight = new scaleDummy("main right Scale");
 #endif
-
+	
+#ifndef SCALE_DUMMY
+scaleInterface *frontScale = new scale("front Scale");
+	scaleInterface *mainScaleLeft = new scale("main left Scale");
+	scaleInterface *mainScaleRight = new scale("main right Scale");
+#endif
 AsyncWebSocketClient *globalClient = NULL;
 
 DynamicJsonDocument jsonMessage(1024);

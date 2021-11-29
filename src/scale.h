@@ -33,5 +33,21 @@ class scaleDummy : public scaleInterface
         void tare();
 };
 
+class scale : public scaleInterface
+{
+    private:
+        char *scaleElementName;
+
+    public:
+        scale(char *elementName);
+        ~scale();
+        int getWeight();
+        int getScaleMultiplier();
+        void setScaleMultiplier(int multiplier);
+        int calibrate(int weight);
+        void setDummyWeight(int dummyWeight); //will not be used. How to avoid?
+        void tare();
+
+};
 
 #endif // SCALE_H
