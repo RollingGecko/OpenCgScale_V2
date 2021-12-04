@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "scale.h"
+#include <HX711.h>
 
 scaleDummy::scaleDummy(char *elementName)
 {
@@ -27,12 +28,12 @@ int scaleDummy::calibrate(int weight)
     return getScaleMultiplier();
 }
 
-int scaleDummy::getScaleMultiplier()
+float scaleDummy::getScaleMultiplier()
 {
     return scaleMultiplier;
 }
 
-void scaleDummy::setScaleMultiplier(int multiplier)
+void scaleDummy::setScaleMultiplier(float multiplier)
 {
     scaleMultiplier = multiplier;
     String message = "ScaleMultiplier in " + String(scaleElementName) + " set to: " + scaleMultiplier;
@@ -59,23 +60,31 @@ scale::scale(char *elementName){
 scale::~scale(){
 
 };
+void scale::init(byte dataPin, byte clkPin, byte gain, float multiplier){
+    hx711Module->begin(dataPin, clkPin, gain);
+    setScaleMultiplier(multiplier);
+};
 int scale::getWeight(){
-
+    int scaleReading = 0;
+	hx711Module->read();
+	scaleReading = round(hx711Module->get_units(5));
+	if (scaleReading <= 4)
+	{
+		scaleReading = 0;
+	}
+return scaleReading;
 };
-int scale::getScaleMultiplier(){
-
+float scale::getScaleMultiplier(){
+    return hx711Module->get_scale();
 };
-void scale::setScaleMultiplier(int multiplier){
-
+void scale::setScaleMultiplier(float multiplier){
+    hx711Module->set_scale(multiplier);
 };
+
 int scale::calibrate(int weight){
 
 };
 
-void scale::setDummyWeight(int dummyWeight){
-    
-};
-
 void scale::tare(){
-
+    hx711Module->tare();
 };
