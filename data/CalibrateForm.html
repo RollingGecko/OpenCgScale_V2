@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scale: Calibrate Elements</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Scale: Calibrate Elements</title>
 
 
-    <style>
+        <style>
         .formField .labelField {
             position: absolute;
         }
@@ -20,147 +20,181 @@
             width: 6em;
         }
     </style>
+    </head>
 
-</head>
+    <body>
 
-<body>
+        <h1>CG Scale</h1>
+        <h4>Calibrate</h4>
 
-    <h1>CG Scale</h1>
-    <h4>Calibrate</h4>
+        <fieldset class="formField">
+            <legend>Front Element</legend>
+            <label for="CalibrationWeightFront" class="labelField">Calbration
+                Weight</label>
+            <input id="CalibrationWeightFront" class="inputField" type="text"
+                required/>
+            <input id="submit_CalibrateFront" type="submit" value="Calibrate" /><br>
+            <label for="scaleMultiplierFront" class="labelField">Scale
+                Multiplier</label>
+            <input id="scaleMultiplierFront" class="inputField" type="text" readonly> <br>
+            <label for="scaleReadingFront" class="labelField">Scale Reading</label> 
+            <input id="scaleReadingFront" class="inputField" type="text"
+                readonly>
+        </fieldset>
+        <fieldset class="formField">
+            <legend>Right Element</legend>
+            <label for="CalibrationWeightRight" class="labelField">Calbration
+                Weight</label>
+            <input id="CalibrationWeightRight" class="inputField" type="text" />
+            <input id="submit_CalibrateRight" type="submit" value="Calibrate" /><br>
+            <label for="scaleMultiplierRight" class="labelField">Scale
+                Multiplier</label>
+            <input id="scaleMultiplierRight" class="inputField" type="text" readonly> <br>
+            <label for="scaleReadingRight" class="labelField">Scale Reading</label>
+            <input id="scaleReadingRight" class="inputField" type="text"
+                readonly>
+        </fieldset>
+        <fieldset class="formField">
+            <legend>Left Element</legend>
+            <label for="CalibrationWeightLeft" class="labelField">Calbration
+                Weight</label>
+            <input id="CalibrationWeightLeft" class="inputField" type="text" />
+            <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br>
+            <label for="scaleMultiplierLeft" class="labelField">Scale Multiplier</label>
+            <input id="scaleMultiplierLeft" class="inputField" type="text"readonly> <br>
+            <label for="scaleReadingLeft" class="labelField">Scale Reading</label>
+            <input id="scaleReadingLeft" class="inputField" type="text"
+                readonly>
+        </fieldset><fieldset>
+            <legend>Store settings</legend>
+            <button id="storeButton">Store</button>
 
-    <fieldset class="formField">
-        <legend>Front Element</legend>
-        <label for="CalibrationWeightFront" class="labelField">Calbration Weight</label>
-        <input id="CalibrationWeightFront" class="inputField" type="text" required/>
-        <input id="submit_CalibrateFront" type="submit" value="Calibrate" /><br>
-        <label for="scaleMultiplierFront" class="labelField">Scale Multiplier</label>
-        <input id="scaleMultiplierFront" class="inputField" type="text" readonly>
-    </fieldset>
-    <fieldset class="formField">
-        <legend>Right Element</legend>
-        <label for="CalibrationWeightRight" class="labelField">Calbration Weight</label>
-        <input id="CalibrationWeightRight" class="inputField" type="text" />
-        <input id="submit_CalibrateRight" type="submit" value="Calibrate" /><br>
-        <label for="scaleMultiplierRight" class="labelField">Scale Multiplier</label>
-        <input id="scaleMultiplierRight" class="inputField" type="text" readonly>
-    </fieldset>
-    <fieldset class="formField">
-        <legend>Left Element</legend>
-        <label for="CalibrationWeightLeft" class="labelField">Calbration Weight</label>
-        <input id="CalibrationWeightLeft" class="inputField" type="text" />
-        <input id="submit_CalibrateLeft" type="submit" value="Calibrate" /><br>
-        <label for="scaleMultiplierLeft" class="labelField">Scale Multiplier</label>
-        <input id="scaleMultiplierLeft" class="inputField" type="text" readonly>
-    </fieldset><fieldset>
-        <legend>Store settings</legend>
-        <button id="storeButton">Store</button>
+        </fieldset>
 
-    </fieldset>
+        <br><br>
+        <a href="/">Backhome</a>
 
-    <br><br>
-    <a href="/">Backhome</a>
-
-</body>
+    </body>
 
 
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    //POST function for front element
-    submitFront = document.getElementById("submit_CalibrateFront");
-    submitFront.onclick = function () {
+        //Reading of Scale from Wbsocket
+        var ws = new WebSocket("ws://192.168.0.1/ws");
 
-        console.log("Calibrate Front");
-        // Sending and receiving data in JSON format using POST method
-        //
-        //ToDo: Check Weight Field for vaild Data
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/scale/calibrate", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                console.log(xhr.responseText);
-                var json = JSON.parse(xhr.responseText);
-                var mutliplierFront = document.getElementById("scaleMultiplierFront")
-                //console.log(json.email + ", " + json.password;)
-                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
-                mutliplierFront.value = json.scaleMultiplier.toString();
-
-                //console.log(json.email + ", " + json.password;)
-            }
+        var leftScaleWeight = 0;
+        var rightScaleWeight = 0;
+        var frontScaleWeight = 0;
+        ws.onopen = function () {
+            console.log("Websocket connected");
         };
-        var weightFront = document.getElementById("CalibrationWeightFront").value;
-        var data = JSON.stringify({ "element": "front", "weight": weightFront });
-        xhr.send(data);
-    }
-    //POST function for right element
-    submitRight = document.getElementById("submit_CalibrateRight");
-    submitRight.onclick = function () {
-        console.log("Calibrate right");
 
-        // Sending and receiving data in JSON format using POST method
-        //
-        
-        //ToDo: Check Weight Field for vaild Data
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/scale/calibrate", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                //console.log(xhr.responseText);
-                var json = JSON.parse(xhr.responseText);
-                var mutliplierRight = document.getElementById("scaleMultiplierRight")
-                //console.log(json.email + ", " + json.password;)
-                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
-                mutliplierRight.value = json.scaleMultiplier.toString();
-            }
+        ws.onmessage = function (evt) {
+            var jsonMessage = JSON.parse(evt.data);
+
+            frontScaleWeight = jsonMessage.weightFront;
+            rightScaleWeight = jsonMessage.weightRight;
+            leftScaleWeight = jsonMessage.weightLeft
+            document.getElementById("scaleReadingFront").value = frontScaleWeight + " g";
+            document.getElementById("scaleReadingRight").value = rightScaleWeight + " g";
+            document.getElementById("scaleReadingLeft").value = leftScaleWeight + " g";
+
         };
-        var weightRight = document.getElementById("CalibrationWeightRight").value;
-        var data = JSON.stringify({ "element": "right", "weight": weightRight });
-        xhr.send(data);
-    }
-    //POST function for left element
-    const submitLeft = document.getElementById("submit_CalibrateLeft");
-    submitLeft.onclick = function () {
-        console.log("Calibrate left");
+        //POST function for front element
+        submitFront = document.getElementById("submit_CalibrateFront");
+        submitFront.onclick = function () {
 
-        // Sending and receiving data in JSON format using POST method
-        //
-        
-        //ToDo: Check Weight Field for vaild Data
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/scale/calibrate", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                //console.log(xhr.responseText);
-                var json = JSON.parse(xhr.responseText);
-                var mutliplierLeft = document.getElementById("scaleMultiplierLeft")
-                //console.log(json.email + ", " + json.password;)
-                console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
-                mutliplierLeft.value = json.scaleMultiplier.toString();
-            }
-        };
-        var weightLeft = document.getElementById("CalibrationWeightLeft").value;
-        var data = JSON.stringify({ "element": "left", "weight": weightLeft });
-        xhr.send(data);
-    }
+            console.log("Calibrate Front");
+            // Sending and receiving data in JSON format using POST method
+            //
+            //ToDo: Check Weight Field for vaild Data
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/scale/calibrate", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log(xhr.responseText);
+                    var json = JSON.parse(xhr.responseText);
+                    var mutliplierFront = document.getElementById("scaleMultiplierFront")
+                    //console.log(json.email + ", " + json.password;)
+                    console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                    mutliplierFront.value = json.scaleMultiplier.toString();
 
-    document.getElementById("storeButton").onclick=function(){
-        console.log("Storefunction");
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/scale/storeMultiplier", true);
-        //xhr.setRequestHeader("Content-Type", "plain/text");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                console.log(xhr.responseText);
-                document.getElementById("storeButton").innerHTML="Button &#10003;"
-            }
-        };    
-        xhr.send();
-       
-    }
+                    //console.log(json.email + ", " + json.password;)
+                }
+            };
+            var weightFront = document.getElementById("CalibrationWeightFront").value;
+            var data = JSON.stringify({ "element": "front", "weight": weightFront });
+            xhr.send(data);
+        }
+        //POST function for right element
+        submitRight = document.getElementById("submit_CalibrateRight");
+        submitRight.onclick = function () {
+            console.log("Calibrate right");
 
-</script>
+            // Sending and receiving data in JSON format using POST method
+            //
 
+            //ToDo: Check Weight Field for vaild Data
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/scale/calibrate", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //console.log(xhr.responseText);
+                    var json = JSON.parse(xhr.responseText);
+                    var mutliplierRight = document.getElementById("scaleMultiplierRight")
+                    //console.log(json.email + ", " + json.password;)
+                    console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                    mutliplierRight.value = json.scaleMultiplier.toString();
+                }
+            };
+            var weightRight = document.getElementById("CalibrationWeightRight").value;
+            var data = JSON.stringify({ "element": "right", "weight": weightRight });
+            xhr.send(data);
+        }
+        //POST function for left element
+        const submitLeft = document.getElementById("submit_CalibrateLeft");
+        submitLeft.onclick = function () {
+            console.log("Calibrate left");
+
+            // Sending and receiving data in JSON format using POST method
+            //
+
+            //ToDo: Check Weight Field for vaild Data
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/scale/calibrate", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //console.log(xhr.responseText);
+                    var json = JSON.parse(xhr.responseText);
+                    var mutliplierLeft = document.getElementById("scaleMultiplierLeft")
+                    //console.log(json.email + ", " + json.password;)
+                    console.log("scaleMultiplier from JSON: " + json.scaleMultiplier);
+                    mutliplierLeft.value = json.scaleMultiplier.toString();
+                }
+            };
+            var weightLeft = document.getElementById("CalibrationWeightLeft").value;
+            var data = JSON.stringify({ "element": "left", "weight": weightLeft });
+            xhr.send(data);
+        }
+
+        document.getElementById("storeButton").onclick = function () {
+            console.log("Storefunction");
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/scale/storeMultiplier", true);
+            //xhr.setRequestHeader("Content-Type", "plain/text");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log(xhr.responseText);
+                    document.getElementById("storeButton").innerHTML = "Button &#10003;"
+                }
+            };
+            xhr.send();
+
+        }
+
+    </script>
 </html>
