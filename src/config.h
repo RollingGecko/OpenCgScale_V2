@@ -31,10 +31,6 @@ IPAddress subnet(255,255,255,0);
 #define SCALEGAIN_1				128
 #define SCALEGAIN_2				128
 
-#define SCALEFACTOR_MAIN		207.00
-#define SCALEFACTOR_1			210.61
-#define SCALEFACTOR_2			199.73
-
 //StandardScaleMultiplier
 
 #define SCALEMULTIPLIER_FRONT   207.00
