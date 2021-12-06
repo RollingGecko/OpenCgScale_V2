@@ -3,7 +3,7 @@
 
 //Dummies
 
-#define SCALE_DUMMY
+//#define SCALE_DUMMY
 
 //Server 
 const char *ssid = "MyESP32AP";
@@ -17,10 +17,10 @@ IPAddress subnet(255,255,255,0);
 
 #define SCALEDATAPIN_MAIN		13
 #define SCALECLKPIN_MAIN		15
-#define SCALEDATAPIN_1			2
-#define SCALECLKPIN_1			0
-#define SCALEDATAPIN_2			04
-#define SCALECLKPIN_2			16
+#define SCALEDATAPIN_LEFT		2
+#define SCALECLKPIN_LEFT		0
+#define SCALEDATAPIN_RIGHT		04
+#define SCALECLKPIN_RIGHT		16
 
 #define LASER_PIN				12
 #define BUTTON_PIN				14
@@ -28,8 +28,8 @@ IPAddress subnet(255,255,255,0);
 #define VOLTAGE_ACCU_PIN		26
 
 #define SCALEGAIN_MAIN			128
-#define SCALEGAIN_1				128
-#define SCALEGAIN_2				128
+#define SCALEGAIN_LEFT			128
+#define SCALEGAIN_RIGHT			128
 
 //StandardScaleMultiplier
 
