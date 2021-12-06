@@ -8,7 +8,7 @@ class scaleInterface
     public:
         scaleInterface(){}
         virtual ~scaleInterface(){}
-        virtual void init(byte dataPin, byte clkPin, byte gain, float multiplier) = 0;
+        virtual void init(byte dataPin, byte clkPin, byte gain) = 0;
         virtual int getWeight() = 0;
         virtual int calibrate(int weight) = 0;
         virtual float getScaleMultiplier() = 0;
@@ -27,7 +27,7 @@ class scaleDummy : public scaleInterface
     public:
         scaleDummy(char *elementName);
         ~scaleDummy();
-        void init(byte dataPin, byte clkPin, byte gain, float multiplier){};
+        void init(byte dataPin, byte clkPin, byte gain){};
         int getWeight();
         float getScaleMultiplier();
         void setScaleMultiplier(float multiplier);
@@ -45,12 +45,12 @@ class scale : public scaleInterface
     public:
         scale(char *elementName);
         ~scale();
-        void init(byte dataPin, byte clkPin, byte gain, float multiplier);
+        void init(byte dataPin, byte clkPin, byte gain);
         int getWeight();
         float getScaleMultiplier();
         void setScaleMultiplier(float multiplier);
         int calibrate(int weight);
-        void setDummyWeight(int dummyWeight); //will not be used. How to avoid?
+        void setDummyWeight(int dummyWeight){}; //will not be used. How to avoid?
         void tare();
 
 };

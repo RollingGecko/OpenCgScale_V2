@@ -19,10 +19,11 @@ AsyncWebSocket ws("/ws");
 #endif
 	
 #ifndef SCALE_DUMMY
-scaleInterface *frontScale = new scale("front Scale");
+	scaleInterface *frontScale = new scale("front Scale");
 	scaleInterface *mainScaleLeft = new scale("main left Scale");
 	scaleInterface *mainScaleRight = new scale("main right Scale");
 #endif
+
 AsyncWebSocketClient *globalClient = NULL;
 
 DynamicJsonDocument jsonMessage(1024);
@@ -109,6 +110,16 @@ void setup()
 {
 	Serial.begin(115200);
 	Serial.println("Start of program!");
+
+	#ifndef SCALE_DUMMY
+
+	frontScale->init(SCALEDATAPIN_MAIN,SCALECLKPIN_MAIN,SCALEGAIN_MAIN);
+	mainScaleLeft->init(SCALEDATAPIN_LEFT,SCALECLKPIN_LEFT,SCALEGAIN_LEFT);
+	mainScaleRight->init(SCALEDATAPIN_RIGHT,SCALECLKPIN_RIGHT,SCALEGAIN_RIGHT);
+	
+	#endif // SCALE_DUMMY
+
+	loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 
 	if (!SPIFFS.begin(true))
 	{
@@ -276,7 +287,7 @@ void setup()
 	ws.onEvent(onWsEvent);
 	server.addHandler(&ws);
 	server.begin();
-	loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
+	
 	Serial.print("ScaleMultiplier: ");
 	Serial.println(frontScale->getScaleMultiplier());
 	

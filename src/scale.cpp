@@ -60,9 +60,8 @@ scale::scale(char *elementName){
 scale::~scale(){
 
 };
-void scale::init(byte dataPin, byte clkPin, byte gain, float multiplier){
+void scale::init(byte dataPin, byte clkPin, byte gain){
     hx711Module->begin(dataPin, clkPin, gain);
-    setScaleMultiplier(multiplier);
 };
 int scale::getWeight(){
     int scaleReading = 0;
@@ -82,7 +81,7 @@ void scale::setScaleMultiplier(float multiplier){
 };
 
 int scale::calibrate(int weight){
-
+    return 100;
 };
 
 void scale::tare(){
