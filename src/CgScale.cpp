@@ -111,16 +111,6 @@ void setup()
 	Serial.begin(115200);
 	Serial.println("Start of program!");
 
-	#ifndef SCALE_DUMMY
-
-	frontScale->init(SCALEDATAPIN_MAIN,SCALECLKPIN_MAIN,SCALEGAIN_MAIN);
-	mainScaleLeft->init(SCALEDATAPIN_LEFT,SCALECLKPIN_LEFT,SCALEGAIN_LEFT);
-	mainScaleRight->init(SCALEDATAPIN_RIGHT,SCALECLKPIN_RIGHT,SCALEGAIN_RIGHT);
-	
-	#endif // SCALE_DUMMY
-
-	loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
-
 	if (!SPIFFS.begin(true))
 	{
 		Serial.println("An Error has occurred while mounting SPIFFS");
@@ -130,6 +120,18 @@ void setup()
 	{
 		Serial.println("File does not exist!");
 	}
+
+#ifndef SCALE_DUMMY
+
+	frontScale->init(SCALEDATAPIN_MAIN,SCALECLKPIN_MAIN,SCALEGAIN_MAIN);
+	mainScaleLeft->init(SCALEDATAPIN_LEFT,SCALECLKPIN_LEFT,SCALEGAIN_LEFT);
+	mainScaleRight->init(SCALEDATAPIN_RIGHT,SCALECLKPIN_RIGHT,SCALEGAIN_RIGHT);
+	
+	#endif // SCALE_DUMMY
+
+loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
+
+
 
 	WiFi.softAP(ssid, password);
 	WiFi.softAPConfig(local_IP, gateway, subnet);
@@ -288,8 +290,8 @@ void setup()
 	server.addHandler(&ws);
 	server.begin();
 	
-	Serial.print("ScaleMultiplier: ");
-	Serial.println(frontScale->getScaleMultiplier());
+	//Serial.print("ScaleMultiplier: ");
+	//Serial.println(frontScale->getScaleMultiplier());
 	
 }
 
@@ -305,5 +307,5 @@ void loop()
 		serializeJson(root, jsonString);
 		globalClient->text(jsonString);
 	}
-	delay(1000);
+	delay(250);
 }

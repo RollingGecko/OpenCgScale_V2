@@ -61,12 +61,12 @@ scale::~scale(){
 
 };
 void scale::init(byte dataPin, byte clkPin, byte gain){
-    hx711Module->begin(dataPin, clkPin, gain);
+    hx711Module.begin(dataPin, clkPin, gain);
 };
 int scale::getWeight(){
     int scaleReading = 0;
-	hx711Module->read();
-	scaleReading = round(hx711Module->get_units(5));
+	hx711Module.read();
+	scaleReading = round(hx711Module.get_units(5));
 	if (scaleReading <= 4)
 	{
 		scaleReading = 0;
@@ -74,10 +74,10 @@ int scale::getWeight(){
 return scaleReading;
 };
 float scale::getScaleMultiplier(){
-    return hx711Module->get_scale();
+    return hx711Module.get_scale();
 };
 void scale::setScaleMultiplier(float multiplier){
-    hx711Module->set_scale(multiplier);
+    hx711Module.set_scale(multiplier);
 };
 
 int scale::calibrate(int weight){
@@ -85,5 +85,5 @@ int scale::calibrate(int weight){
 };
 
 void scale::tare(){
-    hx711Module->tare();
+    hx711Module.tare();
 };

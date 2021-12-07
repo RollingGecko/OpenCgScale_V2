@@ -40,7 +40,7 @@ class scale : public scaleInterface
 {
     private:
         char *scaleElementName;
-        HX711 *hx711Module;
+        HX711 hx711Module;
 
     public:
         scale(char *elementName);
