@@ -17,7 +17,7 @@ int scaleDummy::getWeight()
     return weight;
 }
 
-int scaleDummy::calibrate(int weight)
+float scaleDummy::calibrate(int weight)
 {
     setScaleMultiplier(weight / 2);
     Serial.print("calibrate call for Scale element ");
@@ -57,9 +57,8 @@ scale::scale(char *elementName){
     scaleElementName = elementName;
 };
 
-scale::~scale(){
+scale::~scale(){};
 
-};
 void scale::init(byte dataPin, byte clkPin, byte gain){
     hx711Module.begin(dataPin, clkPin, gain);
 };
@@ -71,7 +70,7 @@ int scale::getWeight(){
 	{
 		scaleReading = 0;
 	}
-return scaleReading;
+    return scaleReading;
 };
 float scale::getScaleMultiplier(){
     return hx711Module.get_scale();
@@ -80,8 +79,15 @@ void scale::setScaleMultiplier(float multiplier){
     hx711Module.set_scale(multiplier);
 };
 
-int scale::calibrate(int weight){
-    return 100;
+float scale::calibrate(int weight)
+{
+    float newMultiplier = 0;
+    Serial.println("Calibration " + String(scaleElementName) + " startet");
+
+    float reading = hx711Module.get_units(10);
+    newMultiplier = (reading / weight) * hx711Module.get_scale();
+    hx711Module.set_scale(newMultiplier);
+    return hx711Module.get_scale();
 };
 
 void scale::tare(){
