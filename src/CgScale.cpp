@@ -202,34 +202,32 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 				}
 				
 			});
-	#ifdef SCALE_DUMMY
+#ifdef SCALE_DUMMY
 	AsyncCallbackJsonWebHandler *setWeightHandler = new AsyncCallbackJsonWebHandler("/debug/setWeight", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
 			StaticJsonDocument<100> responseJson;
-			
-			frontScale->setDummyWeight (jsonObj["frontWeight"].as<int>());
-			mainScaleRight->setDummyWeight (jsonObj["rightWeight"].as<int>());
-			mainScaleLeft->setDummyWeight (jsonObj["leftWeight"].as<int>());
+
+			frontScale->setDummyWeight(jsonObj["frontWeight"].as<int>());
+			mainScaleRight->setDummyWeight(jsonObj["rightWeight"].as<int>());
+			mainScaleLeft->setDummyWeight(jsonObj["leftWeight"].as<int>());
 
 			request->send(200, "text/plain", "DummyWeight set");
-
 		});
 
-		server.addHandler(setWeightHandler);
+	server.addHandler(setWeightHandler);
 
-			AsyncCallbackJsonWebHandler *setLaser = new AsyncCallbackJsonWebHandler("/laser", [](AsyncWebServerRequest *request, JsonVariant &json)
+	AsyncCallbackJsonWebHandler *setLaser = new AsyncCallbackJsonWebHandler("/laser", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
 			boolean laserStatus = jsonObj["laserOn"];
-		//ToDo LaserHandler
+			// ToDo LaserHandler
 			request->send(200, "text/plain", "Laser on: " + String(laserStatus));
-
 		});
 
-		server.addHandler(setLaser);
+	server.addHandler(setLaser);
 
-	#endif
+#endif
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
@@ -289,9 +287,11 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 	ws.onEvent(onWsEvent);
 	server.addHandler(&ws);
 	server.begin();
-	
-	//Serial.print("ScaleMultiplier: ");
-	//Serial.println(frontScale->getScaleMultiplier());
+
+	//tara all scale elements
+	frontScale->tare();
+	mainScaleRight->tare();
+	mainScaleLeft->tare();
 	
 }
 
@@ -305,7 +305,7 @@ void loop()
 		//ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
 		String jsonString;
 		serializeJson(root, jsonString);
-		globalClient->text(jsonString);
+		globalClient->text(jsonString); //ToDo: Problem when changing between Pages and opening new websocket-connections
 	}
-	delay(250);
+	delay(100);
 }
