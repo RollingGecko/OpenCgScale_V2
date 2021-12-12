@@ -7,7 +7,7 @@
 
 //Server 
 const char *ssid = "CgScale";
-const char *password = "scale";
+const char *password = "jetflight";
 IPAddress local_IP(192,168,0,1);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
