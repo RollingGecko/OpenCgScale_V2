@@ -26,8 +26,7 @@ AsyncWebSocket ws("/ws");
 
 AsyncWebSocketClient *globalClient = NULL;
 
-DynamicJsonDocument jsonMessage(1024);
-JsonObject root = jsonMessage.to<JsonObject>();
+boolean wsConnectionState = false;
 
 //functions to store and load scaleMulitplier
 boolean writeScaleMultiplierToFile(scaleInterface *front, scaleInterface *right, scaleInterface *left)
@@ -89,12 +88,14 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
 		Serial.println("Websocket client connection received");
 		globalClient = client;
+		wsConnectionState = true;
 	}
 	else if (type == WS_EVT_DISCONNECT)
 	{
 
 		Serial.println("Websocket client connection finished");
 		globalClient = NULL;
+		wsConnectionState = false;
 	}
 }
 
@@ -311,13 +312,19 @@ void loop()
 {
 	if ((globalClient != NULL && globalClient->status() == WS_CONNECTED))
 	{
+		DynamicJsonDocument jsonMessage(1024);
+		JsonObject root = jsonMessage.to<JsonObject>();
 		root["weightFront"] = frontScale->getWeight();
 		root["weightLeft"] = mainScaleLeft->getWeight();
 		root["weightRight"] = mainScaleRight->getWeight();
 		// ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
 		String jsonString;
 		serializeJson(root, jsonString);
-		globalClient->text(jsonString); // ToDo: Problem when changing between Pages and opening new websocket-connections
+		if (wsConnectionState && WiFi.softAPgetStationNum() != 0) //solves the problem, the the system crashes when websocket is closed and message is qued.
+		{
+			globalClient->text(jsonString); 
+		}
+		
 	}
 
 	if (WiFi.softAPgetStationNum() == 0)
