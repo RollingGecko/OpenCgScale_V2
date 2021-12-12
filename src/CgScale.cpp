@@ -121,6 +121,8 @@ void setup()
 		Serial.println("File does not exist!");
 	}
 
+	pinMode(LASER_PIN, OUTPUT);
+
 #ifndef SCALE_DUMMY
 
 	frontScale->init(SCALEDATAPIN_MAIN,SCALECLKPIN_MAIN,SCALEGAIN_MAIN);
@@ -217,17 +219,30 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 
 	server.addHandler(setWeightHandler);
 
+
+
+#endif
+
 	AsyncCallbackJsonWebHandler *setLaser = new AsyncCallbackJsonWebHandler("/laser", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
 			boolean laserStatus = jsonObj["laserOn"];
 			// ToDo LaserHandler
+			Serial.println("Laser on: " + String(laserStatus));
+			if (laserStatus)
+			{
+				digitalWrite(LASER_PIN, HIGH);
+				
+			} else
+			{
+				digitalWrite(LASER_PIN, LOW);
+			}
+			
 			request->send(200, "text/plain", "Laser on: " + String(laserStatus));
 		});
 
 	server.addHandler(setLaser);
 
-#endif
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)
 		{
 			JsonObject jsonObj = json.as<JsonObject>();
