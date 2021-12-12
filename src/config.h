@@ -25,7 +25,8 @@ IPAddress subnet(255,255,255,0);
 #define LASER_PIN				12
 #define BUTTON_PIN				14
 #define LED_PIN					27
-#define VOLTAGE_ACCU_PIN		26
+#define VOLTAGE_ACCU_PIN		32
+#define ACCU_VOLTAGE_MULTIPLIER 986.746
 
 #define SCALEGAIN_MAIN			128
 #define SCALEGAIN_LEFT			128

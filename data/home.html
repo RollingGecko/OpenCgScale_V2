@@ -49,6 +49,7 @@
     <fieldset>
         <label for="laserCheckbox">Laser on</label>
         <input id="laserCheckbox" type="checkbox">
+        <p id="voltageMessage">Accu-Voltage: no reading</p>
     </fieldset>
     <br>
     <button id="taraButton">Tara</button> 
@@ -130,12 +131,25 @@
         };    
         xhr.send();
     };
+    function readVoltage(){
+        var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/accu/voltage");
+            xhr.setRequestHeader("Content-Type", "text/plain");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var voltageField = document.getElementById("voltageMessage");
+                    var voltage = xhr.responseText;
+                    voltageField.innerHTML="Accu-Voltage: " + voltage + " V";
+                    console.log("Refresh VoltageReading");
+                }
+            };
+            xhr.send();
+    };
+    setInterval(readVoltage, 60000);
     
-    function prepareButton(){
-
-
-}
-
+    function prepareButton() {
+        readVoltage();           
+    }
 </script>
 </html>
 

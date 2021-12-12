@@ -78,7 +78,7 @@ void loadScaleMultiplierfromFile(scaleInterface *front, scaleInterface *right, s
 	}
 };
 
-//REST Handler
+
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
@@ -109,6 +109,10 @@ void onUnknownRequest(AsyncWebServerRequest *request)
 unsigned long previousMillisConnected = 0;
 int ledState = LOW;
 
+float readAccuVoltage(){
+	return (analogRead(VOLTAGE_ACCU_PIN) / ACCU_VOLTAGE_MULTIPLIER) ;
+}
+
 void setup()
 {
 	Serial.begin(115200);
@@ -127,6 +131,7 @@ void setup()
 //Pin initialization
 	pinMode(LASER_PIN, OUTPUT);
 	pinMode(LED_PIN,OUTPUT);
+	pinMode(VOLTAGE_ACCU_PIN,INPUT);
 
 #ifndef SCALE_DUMMY
 
@@ -145,6 +150,8 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 	Serial.println();
 	Serial.print("IP address: ");
 	Serial.println(WiFi.softAPIP());
+
+	//REST Handler
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
 			  {
 				  Serial.println("Incomming /htm -Event");
@@ -157,9 +164,14 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 			  });
 	server.on("/laser", HTTP_GET, [](AsyncWebServerRequest *request)
 			  {
-				  Serial.println("GET Laser status");
-				  request->send(200, "text/plain", "tbd Laserstatus");
-			  });
+				Serial.println("GET Laser status");
+				request->send(200, "text/plain", "tbd Laserstatus"); });
+	server.on("/accu/voltage", HTTP_GET, [](AsyncWebServerRequest *request)
+			  {
+		float accuVoltage = readAccuVoltage();
+		Serial.println("AccuVoltage send: " + String(accuVoltage));
+		request->send(200, "text/plain",String(accuVoltage)); 
+			});
 	server.on("/scale/tara", HTTP_POST, [](AsyncWebServerRequest *request)
 			  {
 				  Serial.println("POST tara");
@@ -341,7 +353,6 @@ void loop()
 			}
 			digitalWrite(LED_PIN, ledState);
 			previousMillisConnected = millis();
-			// digitalWrite(LED_PIN, digitalRead(LED_PIN));
 		}
 	}
 	else
