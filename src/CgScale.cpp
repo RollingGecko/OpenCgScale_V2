@@ -105,6 +105,8 @@ void onUnknownRequest(AsyncWebServerRequest *request)
 	request->send(404);
 };
 
+unsigned long previousMillisConnected = 0;
+int ledState = LOW;
 
 void setup()
 {
@@ -121,7 +123,9 @@ void setup()
 		Serial.println("File does not exist!");
 	}
 
+//Pin initialization
 	pinMode(LASER_PIN, OUTPUT);
+	pinMode(LED_PIN,OUTPUT);
 
 #ifndef SCALE_DUMMY
 
@@ -129,7 +133,7 @@ void setup()
 	mainScaleLeft->init(SCALEDATAPIN_LEFT,SCALECLKPIN_LEFT,SCALEGAIN_LEFT);
 	mainScaleRight->init(SCALEDATAPIN_RIGHT,SCALECLKPIN_RIGHT,SCALEGAIN_RIGHT);
 	
-	#endif // SCALE_DUMMY
+#endif // SCALE_DUMMY
 
 loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 
@@ -155,11 +159,6 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 				  Serial.println("GET Laser status");
 				  request->send(200, "text/plain", "tbd Laserstatus");
 			  });
-	// server.on("/laser", HTTP_POST, [](AsyncWebServerRequest *request)
-	// 		  {
-	// 			  Serial.println("POST Laser status");
-	// 			  request->send(200, "text/plain", "Laser toggled");
-	// 		  });
 	server.on("/scale/tara", HTTP_POST, [](AsyncWebServerRequest *request)
 			  {
 				  Serial.println("POST tara");
@@ -218,9 +217,6 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 		});
 
 	server.addHandler(setWeightHandler);
-
-
-
 #endif
 
 	AsyncCallbackJsonWebHandler *setLaser = new AsyncCallbackJsonWebHandler("/laser", [](AsyncWebServerRequest *request, JsonVariant &json)
@@ -240,7 +236,6 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 			
 			request->send(200, "text/plain", "Laser on: " + String(laserStatus));
 		});
-
 	server.addHandler(setLaser);
 
 	AsyncCallbackJsonWebHandler *scaleCalibrateHandler = new AsyncCallbackJsonWebHandler("/scale/calibrate", [](AsyncWebServerRequest *request, JsonVariant &json)
@@ -307,20 +302,44 @@ loadScaleMultiplierfromFile(frontScale,mainScaleRight,mainScaleLeft);
 	frontScale->tare();
 	mainScaleRight->tare();
 	mainScaleLeft->tare();
+
+	digitalWrite(LED_PIN,LOW);
 	
 }
 
 void loop()
 {
-	if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+	if ((globalClient != NULL && globalClient->status() == WS_CONNECTED))
 	{
 		root["weightFront"] = frontScale->getWeight();
 		root["weightLeft"] = mainScaleLeft->getWeight();
 		root["weightRight"] = mainScaleRight->getWeight();
-		//ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
+		// ToD0: Can be optimized by using buffer https://github.com/me-no-dev/ESPAsyncWebServer#direct-access-to-web-socket-message-buffer
 		String jsonString;
 		serializeJson(root, jsonString);
-		globalClient->text(jsonString); //ToDo: Problem when changing between Pages and opening new websocket-connections
+		globalClient->text(jsonString); // ToDo: Problem when changing between Pages and opening new websocket-connections
+	}
+
+	if (WiFi.softAPgetStationNum() == 0)
+	{
+		if ((millis() - previousMillisConnected) >= 400)
+		{
+			if (ledState == LOW)
+			{
+				ledState = HIGH;
+			}
+			else
+			{
+				ledState = LOW;
+			}
+			digitalWrite(LED_PIN, ledState);
+			previousMillisConnected = millis();
+			// digitalWrite(LED_PIN, digitalRead(LED_PIN));
+		}
+	}
+	else
+	{
+		digitalWrite(LED_PIN, HIGH);
 	}
 	delay(100);
 }
